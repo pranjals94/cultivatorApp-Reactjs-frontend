@@ -367,6 +367,24 @@ const Reception = () => {
     setShowViewParticipants(true);
   }
 
+  function handleExportxcel() {
+    HttpService.post(
+      process.env.REACT_APP_API_URL + "/reception/createexcelsheet",
+      { persons: checkedItems },
+      { responseType: "blob" } // header important
+    ).then(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "exportFile.xlsx");
+        document.body.appendChild(link);
+        link.click();
+      },
+      (error) => {}
+    );
+  }
+
   return (
     <>
       <ToastContainer limit={1} />
@@ -600,8 +618,13 @@ const Reception = () => {
                 </button>
                 <ul className="dropdown-menu">
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Dropdown link
+                    <a
+                      className="dropdown-item"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleExportxcel();
+                      }}>
+                      Export As Excel
                     </a>
                   </li>
                   <li>

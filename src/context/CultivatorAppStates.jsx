@@ -9,7 +9,7 @@ function CultivatorAppStates({ children }) {
 
   // const [user, setUser] = useState({
   //   nameOfUser: " userDetails.person.name",
-  //   role: "ORIENTATION",
+  //   role: "RECEPTION",
   //   user_id: "userDetails.id",
   //   person_id: "userDetails.person.id",
   // });
