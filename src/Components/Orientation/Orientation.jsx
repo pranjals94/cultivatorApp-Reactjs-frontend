@@ -19,9 +19,7 @@ const Orientation = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    HttpService.get(
-      process.env.REACT_APP_API_URL + "/application/getuser"
-    ).then(
+    HttpService.get(process.env.REACT_APP_API_URL + "/common/getuser").then(
       (response) => {
         setuserdata(response.data);
         console.log(response);
@@ -102,7 +100,7 @@ const Orientation = () => {
       formData
     ).then(
       (response) => {
-        alert("Attendance marked .");
+        alert("Visitor Added.");
       },
       (error) => {
         alert("OOps!.. Somwthing went wrong");

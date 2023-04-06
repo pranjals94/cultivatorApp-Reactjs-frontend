@@ -12,6 +12,7 @@ import Paginate from "../Common/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CreateOrientation from "./CreateOrientation";
 import UploadVisitExcelFile from "./UploadVisitExcelFile";
+import DateTimePicker from "react-datetime-picker";
 
 import {
   faSearch,
@@ -56,6 +57,8 @@ const Reception = () => {
   const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
   const [showVisitModal, setShowVisitModal] = useState(false);
+  const [date_time_start, SetDate_Time_Start] = useState(new Date());
+  const [date_time_end, SetDate_Time_End] = useState(new Date());
 
   function refresh() {
     setReload(!reload);
@@ -368,6 +371,11 @@ const Reception = () => {
   }
 
   function handleExportxcel() {
+    if (!checkedItems.length) {
+      alert("please select Persons");
+      return;
+    }
+
     HttpService.post(
       process.env.REACT_APP_API_URL + "/reception/createexcelsheet",
       { persons: checkedItems },
@@ -385,6 +393,14 @@ const Reception = () => {
     );
   }
 
+  const handleDateTimePickerChangeStart = (value) => {
+    SetDate_Time_Start(value);
+  };
+
+  const handleDateTimePickerChangeEnd = (value) => {
+    SetDate_Time_End(value);
+  };
+
   return (
     <>
       <ToastContainer limit={1} />
@@ -400,6 +416,7 @@ const Reception = () => {
           <CreateOrientation showModal={setShowCreateOrientationModal} />
         </Modal.Body>
       </Modal>
+      {/* //------apply filter search starts--------- */}
       <Modal
         size="lg"
         animation={false}
@@ -411,75 +428,30 @@ const Reception = () => {
         <Modal.Body>
           <form className="row g-3">
             <div className="col-md-6">
-              <label for="inputEmail4" className="form-label">
-                Email
-              </label>
-              <input type="email" className="form-control" id="inputEmail4" />
-            </div>
-            <div className="col-md-6">
-              <label for="inputPassword4" className="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="inputPassword4"
-              />
-            </div>
-            <div className="col-12">
-              <label for="inputAddress" className="form-label">
-                Address
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputAddress"
-                placeholder="1234 Main St"
-              />
-            </div>
-            <div className="col-12">
-              <label for="inputAddress2" className="form-label">
-                Address 2
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="inputAddress2"
-                placeholder="Apartment, studio, or floor"
+              <label htmlFor="created_date_start" className="form-label">
+                Date created from
+              </label>{" "}
+              <DateTimePicker
+                name="startTime"
+                id="created_date_start"
+                clearIcon={null}
+                value={date_time_start}
+                // format={"y-MM-dd h:mm:ss a"}
+                onChange={(value) => handleDateTimePickerChangeStart(value)}
               />
             </div>
             <div className="col-md-6">
-              <label for="inputCity" className="form-label">
-                City
-              </label>
-              <input type="text" className="form-control" id="inputCity" />
-            </div>
-            <div className="col-md-4">
-              <label for="inputState" className="form-label">
-                State
-              </label>
-              <select id="inputState" className="form-select">
-                <option selected>Choose...</option>
-                <option>...</option>
-              </select>
-            </div>
-            <div className="col-md-2">
-              <label for="inputZip" className="form-label">
-                Zip
-              </label>
-              <input type="text" className="form-control" id="inputZip" />
-            </div>
-            <div className="col-12 d-flex">
-              <div className="mx-auto">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSearch();
-                  }}
-                  className="btn btn-primary">
-                  Go
-                </button>
-              </div>
+              <label htmlFor="created_date_end" className="form-label">
+                Date created to
+              </label>{" "}
+              <DateTimePicker
+                name="endTime"
+                id="created_date_end"
+                clearIcon={null}
+                value={date_time_start}
+                // format={"y-MM-dd h:mm:ss a"}
+                onChange={(value) => handleDateTimePickerChangeStart(value)}
+              />
             </div>
           </form>
         </Modal.Body>
@@ -492,7 +464,7 @@ const Reception = () => {
           <UploadExcelFile notify={notify} refresh={refresh} />
         </Modal.Body>
       </Modal>
-
+      {/* //------apply filter search starts--------- */}
       <Modal
         size="lg"
         animation={false}

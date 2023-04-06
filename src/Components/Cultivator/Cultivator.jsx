@@ -1,55 +1,57 @@
 import React, { useEffect, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import HttpService from "../../Services/HttpService";
-import { useState } from "react";
-import Button from "react-bootstrap/Button";
 import { CultivatorAppContext } from "../../context/CultivatorAppContext";
 import ListAssignedPersons from "./ListAssignedPersons";
+import ListAssignedPersonsAll from "./ListAssignedPersonsAll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleArrowRight,
   faCircleArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "./Sidebar";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useLocation, Navigate, useNavigate, Link } from "react-router-dom";
+import HttpService from "../../Services/HttpService";
+import { useState } from "react";
+import Button from "react-bootstrap/Button";
 
 const Cultivator = () => {
   const a = useContext(CultivatorAppContext);
   // const [userData, setUserData] = useState({});
   const [assignedPersons, setAssignedPersons] = useState([]);
+  const [assignedPersonsAll, setAssignedPersonsAll] = useState([]);
+  const [activeTab, setActiveTab] = useState([]);
   const navigate = useNavigate();
   const [viewSideBar, setViewSideBar] = useState(false);
+  const [reloadPage, setReloadPage] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone_no: Number,
+    gender: "",
+    email: "",
+  });
 
   useEffect(() => {
-    
-  //   setAssignedPersons([
-  //     {
-  //       id: 1,
-  //       name: "Bisleri",
-  //       phone_no: 94775874783,
-  //       email: "bisleri@iut.com",
-  //       gender: "N/A"
-  //     },
-  //     {
-  //       id: 1,
-  //       name: "Bisleri",
-  //       phone_no: 94775874783,
-  //       email: "bisleri@iut.com",
-  //       gender: "N/A"
-  //     },
-  //     {
-  //       id: 1,
-  //       name: "Bisleri",
-  //       phone_no: 94775874783,
-  //       email: "bisleri@iut.com",
-  //       gender: "N/A"
-  //     },
-  //   ]); //for fast development only
-
     HttpService.get(
-      "/cultivator/assigned_persons/" + a.user.person_id.toString()
+      process.env.REACT_APP_API_URL +
+        "/cultivator/assigned_persons/" +
+        a.user.person_id
     ).then(
       (response) => {
         setAssignedPersons(response.data.assigned_persons);
+        // console.log(response);
+      },
+      (error) => {
+        // alert(error.response.data);
+      }
+    );
+
+    HttpService.get(
+      process.env.REACT_APP_API_URL +
+        "/cultivator/assigned_persons_all/" +
+        a.user.person_id
+    ).then(
+      (response) => {
+        setAssignedPersonsAll(response.data.assigned_persons);
         // console.log(response);
       },
       (error) => {
@@ -73,6 +75,27 @@ const Cultivator = () => {
 
   const showSidebar = () => {
     setViewSideBar(!viewSideBar);
+  };
+
+  const onchangeHandler = (e) => {
+    let temp = formData;
+    temp[e.target.name] = e.target.value;
+    setFormData(temp);
+  };
+
+  const onSubmit = () => {
+    console.log("form data", formData);
+    setReloadPage(!reloadPage); // just toggle the state to reload page including use effect dependency
+    HttpService.post("/common/createperson", formData).then(
+      (response) => {
+        console.log(response);
+        alert(response.data.msg);
+      },
+      (error) => {
+        console.log(error);
+        alert(error.response.data.detail);
+      }
+    );
   };
 
   return (
@@ -162,7 +185,7 @@ const Cultivator = () => {
                     role="tab"
                     aria-controls="nav-assigned"
                     aria-selected="true">
-                    Assigned
+                    Assigned Visitors
                   </a>
                   <a
                     className="nav-item nav-link"
@@ -172,18 +195,30 @@ const Cultivator = () => {
                     role="tab"
                     aria-controls="nav-profile"
                     aria-selected="false">
-                    Profile
+                    Current Visitors
                   </a>
                   <a
-                    className="nav-item nav-link"
-                    id="nav-contact-tab"
+                    className="nav-link"
+                    id="add-new-person-tab"
                     data-toggle="tab"
-                    href="#nav-contact"
+                    href="#add-new-person"
                     role="tab"
-                    aria-controls="nav-contact"
+                    aria-controls="add-new-person"
                     aria-selected="false">
-                    Contact
+                    Add Visitor
                   </a>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search"
+                      aria-label="Input group example"
+                      aria-describedby="btnGroupAddon2"
+                    />
+                    <div className="input-group-text" id="btnGroupAddon2">
+                      <FontAwesomeIcon className="fa-1x" icon={faSearch} />
+                    </div>
+                  </div>
                 </div>
               </nav>
               <div className="tab-content" id="nav-tabContent">
@@ -193,21 +228,121 @@ const Cultivator = () => {
                   role="tabpanel"
                   aria-labelledby="nav-assigned-tab">
                   {/* //----------------list assigned person table----------- */}
-                  <ListAssignedPersons assignedPersons={assignedPersons} />{" "}
+                  <ListAssignedPersonsAll
+                    assignedPersonsAll={assignedPersonsAll}
+                  />{" "}
                 </div>
                 <div
                   className="tab-pane fade"
                   id="nav-profile"
                   role="tabpanel"
                   aria-labelledby="nav-profile-tab">
-                  ...
+                  <ListAssignedPersons
+                    assignedPersons={assignedPersons}
+                    tabProp={2}
+                  />{" "}
                 </div>
+
                 <div
-                  className="tab-pane fade"
-                  id="nav-contact"
+                  className="tab-pane fade "
+                  id="add-new-person"
                   role="tabpanel"
-                  aria-labelledby="nav-contact-tab">
-                  ...
+                  aria-labelledby="add-new-person-tab">
+                  {/* //------------------Add new person from starts------------------------- */}
+                  <form>
+                    <div className="form-row">
+                      <div className="form-group col-md-6">
+                        <label htmlFor="fullname">Full name</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="fullname"
+                          placeholder="Enter Full Name"
+                          name="name"
+                          onChange={(e) => onchangeHandler(e)}
+                        />
+                      </div>
+                      <div className="form-group col-md-6">
+                        <label htmlFor="phonenumber">Phone Number</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="phonenumber"
+                          placeholder="Enter Mobile No."
+                          name="phone_no"
+                          onChange={(e) => onchangeHandler(e)}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="email">Email</label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        placeholder="eg: harekrishna@xyz.com"
+                        name="email"
+                        onChange={(e) => onchangeHandler(e)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="gender">Gender</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="gender"
+                        placeholder="Gender"
+                        name="gender"
+                        onChange={(e) => onchangeHandler(e)}
+                      />
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group col-md-6">
+                        <label htmlFor="inputCity">City</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="inputCity"
+                        />
+                      </div>
+                      <div className="form-group col-md-4">
+                        <label htmlFor="inputState">State</label>
+                        <select id="inputState" className="form-control">
+                          <option selected>Choose...</option>
+                          <option>...</option>
+                        </select>
+                      </div>
+                      <div className="form-group col-md-2">
+                        <label htmlFor="inputZip">Zip</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="inputZip"
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="gridCheck"
+                        />
+                        <label className="form-check-label" htmlFor="gridCheck">
+                          Check me out
+                        </label>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onSubmit();
+                      }}
+                      className="btn btn-primary">
+                      Submit
+                    </button>
+                  </form>
+                  {/* //-------------------------Addnew person form ends----------------- */}
                 </div>
               </div>
             </div>

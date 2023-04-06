@@ -16,17 +16,15 @@ const UserHomepage = () => {
       "modal-backdrop fade show"
     );
     collection[0]?.remove();
-    HttpService.get(
-      process.env.REACT_APP_API_URL + "/application/getuser"
-    ).then(
+    HttpService.get(process.env.REACT_APP_API_URL + "/common/getuser").then(
       (response) => {
         a.setUser(response.data);
         console.log(response);
       },
       (error) => {
         //disable during development
-        alert(error.message);
-        navigate("/app/login");
+        // alert(error.message);
+        // navigate("/app/login");
       }
     );
   }, []);

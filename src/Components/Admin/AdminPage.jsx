@@ -37,7 +37,7 @@ const AdminPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // HttpService.get("/application/getuser").then(
+    // HttpService.get("/common/getuser").then(
     //   (response) => {
     //     setUserData(response.data);
     //     console.log(response);

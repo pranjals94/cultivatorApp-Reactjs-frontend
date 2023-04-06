@@ -15,9 +15,9 @@ const CultivatorHomePage = () => {
   useEffect(() => {
     a.setUser({});
     const token = cookies.get("access_token");
-    console.log("cookie token", token)
+    console.log("cookie token", token);
     if (token) {
-      HttpService.get("/application/getuser").then(
+      HttpService.get("/common/getuser").then(
         (response) => {
           a.setUser(response.data);
           navigate("/app/userhomepage");
