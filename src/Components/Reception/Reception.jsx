@@ -57,8 +57,10 @@ const Reception = () => {
   const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
   const [showVisitModal, setShowVisitModal] = useState(false);
-  const [date_time_start, SetDate_Time_Start] = useState(new Date());
-  const [date_time_end, SetDate_Time_End] = useState(new Date());
+  const [appliedFilters, setAppliedFilters] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
   function refresh() {
     setReload(!reload);
@@ -310,7 +312,7 @@ const Reception = () => {
 
   function handleSearch() {
     if (!searchInput) {
-      notify("emty Search");
+      notify("Empty Search");
       return;
     }
     setSearchResult(true);
@@ -394,11 +396,31 @@ const Reception = () => {
   }
 
   const handleDateTimePickerChangeStart = (value) => {
-    SetDate_Time_Start(value);
+    const temp = { ...appliedFilters };
+    temp["startDate"] = value;
+    setAppliedFilters(temp);
   };
 
   const handleDateTimePickerChangeEnd = (value) => {
-    SetDate_Time_End(value);
+    const temp = { ...appliedFilters };
+    temp["endDate"] = value;
+    setAppliedFilters(temp);
+  };
+
+  const handleFilterSearch = () => {
+    // console.log(appliedFilters);
+    HttpService.post(
+      process.env.REACT_APP_API_URL + "/test/searchbyfilter",
+      appliedFilters
+    ).then(
+      (response) => {
+        setSearchResult(true);
+        setGuests(response.data.result);
+        setShowFilterMenu(false);
+        // console.log(response.data.result);
+      },
+      (error) => {}
+    );
   };
 
   return (
@@ -432,11 +454,12 @@ const Reception = () => {
                 Date created from
               </label>{" "}
               <DateTimePicker
-                name="startTime"
+                name="startDate"
                 id="created_date_start"
                 clearIcon={null}
-                value={date_time_start}
-                // format={"y-MM-dd h:mm:ss a"}
+                value={appliedFilters.startDate}
+                maxDate={new Date()}
+                format={"y-MM-dd h:mm a"}
                 onChange={(value) => handleDateTimePickerChangeStart(value)}
               />
             </div>
@@ -445,13 +468,26 @@ const Reception = () => {
                 Date created to
               </label>{" "}
               <DateTimePicker
-                name="endTime"
+                name="endDate"
                 id="created_date_end"
                 clearIcon={null}
-                value={date_time_start}
-                // format={"y-MM-dd h:mm:ss a"}
-                onChange={(value) => handleDateTimePickerChangeStart(value)}
+                value={appliedFilters.endDate}
+                maxDate={new Date()}
+                format={"y-MM-dd h:mm a"}
+                onChange={(value) => handleDateTimePickerChangeEnd(value)}
               />
+            </div>
+            <div className="col-12 d-flex">
+              <div className="mx-auto">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleFilterSearch();
+                  }}
+                  className="btn btn-primary">
+                  Go
+                </button>
+              </div>
             </div>
           </form>
         </Modal.Body>
@@ -464,7 +500,7 @@ const Reception = () => {
           <UploadExcelFile notify={notify} refresh={refresh} />
         </Modal.Body>
       </Modal>
-      {/* //------apply filter search starts--------- */}
+      {/* //------apply filter search ends--------- */}
       <Modal
         size="lg"
         animation={false}

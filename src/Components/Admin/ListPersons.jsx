@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HttpService from "../../Services/HttpService";
 const ListPersons = (props) => {
-
   const [modalData, setModalData] = useState({});
   const [modalFormData, setModalFormData] = useState({
     person_id: "",
@@ -27,7 +26,7 @@ const ListPersons = (props) => {
     setModalFormData(temp);
     setModalData(item);
   };
-  
+
   const createUserClicked = () => {
     console.log("modalFormData", modalFormData);
     HttpService.post("/admin/createuser", modalFormData).then(
@@ -57,7 +56,7 @@ const ListPersons = (props) => {
           <tbody>
             {props.persons.map((item, indx) => (
               <tr
-              key={indx}
+                key={indx}
                 onClick={() => onModelShow(item)}
                 data-toggle="modal"
                 data-target="#exampleModal">

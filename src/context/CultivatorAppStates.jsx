@@ -3,15 +3,15 @@ import React, { useState } from "react";
 import { CultivatorAppContext } from "./CultivatorAppContext";
 
 function CultivatorAppStates({ children }) {
-  // const [user, setUser] = useState({});
+  const [user, setUser] = useState({});
   // for development
 
-  const [user, setUser] = useState({
-    nameOfUser: " userDetails.person.name",
-    role: "RECEPTION",
-    user_id: "userDetails.id",
-    person_id: "userDetails.person.id",
-  });
+  // const [user, setUser] = useState({
+  //   nameOfUser: " userDetails.person.name",
+  //   role: "RECEPTIONIST",
+  //   user_id: "userDetails.id",
+  //   person_id: "userDetails.person.id",
+  // });
 
   const [temp, setTemp] = useState(null);
   const Context_testData = { name: "Billu", age: "24" };

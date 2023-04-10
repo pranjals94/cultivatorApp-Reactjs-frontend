@@ -57,9 +57,7 @@ const AdminPage = () => {
       }
     );
 
-    HttpService.get(
-      process.env.REACT_APP_API_URL + "/application/getroles"
-    ).then(
+    HttpService.get(process.env.REACT_APP_API_URL + "/common/getroles").then(
       (response) => {
         setRoles(response.data.roles);
       },
@@ -92,7 +90,7 @@ const AdminPage = () => {
     console.log("form data", formData);
     setReloadPage(!reloadPage); // just toggle the state to reload page including use effect dependency
     HttpService.post(
-      process.env.REACT_APP_API_URL + "/application/createperson",
+      process.env.REACT_APP_API_URL + "/common/createperson",
       formData
     ).then(
       (response) => {

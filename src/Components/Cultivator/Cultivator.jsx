@@ -31,13 +31,14 @@ const Cultivator = () => {
   });
 
   useEffect(() => {
+    
     HttpService.get(
       process.env.REACT_APP_API_URL +
         "/cultivator/assigned_persons/" +
         a.user.person_id
     ).then(
       (response) => {
-        setAssignedPersons(response.data.assigned_persons);
+        setAssignedPersons(response.data.guests);
         // console.log(response);
       },
       (error) => {
@@ -51,7 +52,7 @@ const Cultivator = () => {
         a.user.person_id
     ).then(
       (response) => {
-        setAssignedPersonsAll(response.data.assigned_persons);
+        setAssignedPersonsAll(response.data.guests);
         // console.log(response);
       },
       (error) => {
@@ -207,18 +208,23 @@ const Cultivator = () => {
                     aria-selected="false">
                     Add Visitor
                   </a>
-                  <div className="input-group">
-                    <input
+                  <a>
+                  {/* <h1>
+                        {a.user.person_id}
+                  </h1> */}
+                  </a>
+                  {/* <div className="input-group">
+                    {/* <input
                       type="text"
                       className="form-control"
                       placeholder="Search"
                       aria-label="Input group example"
                       aria-describedby="btnGroupAddon2"
-                    />
-                    <div className="input-group-text" id="btnGroupAddon2">
+                    /> 
+                     <div className="input-group-text" id="btnGroupAddon2">
                       <FontAwesomeIcon className="fa-1x" icon={faSearch} />
-                    </div>
-                  </div>
+                    </div> 
+                  </div> */}
                 </div>
               </nav>
               <div className="tab-content" id="nav-tabContent">
@@ -242,7 +248,6 @@ const Cultivator = () => {
                     tabProp={2}
                   />{" "}
                 </div>
-
                 <div
                   className="tab-pane fade "
                   id="add-new-person"

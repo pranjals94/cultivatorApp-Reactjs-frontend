@@ -23,16 +23,16 @@ const UserHomepage = () => {
       },
       (error) => {
         //disable during development
-        // alert(error.message);
-        // navigate("/app/login");
+        alert(error.message);
+        navigate("/app/login");
       }
     );
   }, []);
 
   if (a.user.role === "ADMIN") return <AdminPage />;
   if (a.user.role === "CULTIVATOR") return <Cultivator />;
-  if (a.user.role === "ORIENTATION") return <Orientation />;
-  if (a.user.role === "RECEPTION") return <Reception />;
+  if (a.user.role === "ORIENTOR") return <Orientation />;
+  if (a.user.role === "RECEPTIONIST") return <Reception />;
   return (
     <h5>Loading...!</h5>
     // <div
